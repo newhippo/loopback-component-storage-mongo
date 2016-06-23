@@ -11,6 +11,7 @@ request         = require 'supertest'
 
 insertTestFile = (ds, container, done) ->
   options =
+    _id: '1234'
     filename: 'item.png'
     mode: 'w'
     metadata:
@@ -117,6 +118,9 @@ describe 'mongo gridfs connector', ->
       ds.connector.db.collection('fs.files').remove {}, done
 
     before (done) ->
+      ds.connector.db.collection('fs.chunks').remove {}, done
+
+    before (done) ->
       server = app.listen done
 
     after ->
@@ -193,7 +197,11 @@ describe 'mongo gridfs connector', ->
    
       before (done) ->
         ds.connector.db.collection('fs.files').remove {}, done
-     
+
+
+      before (done) ->
+        ds.connector.db.collection('fs.chunks').remove {}, done
+      
       before (done) ->
         insertTestFile ds, 'my-cats', done
 
@@ -204,11 +212,32 @@ describe 'mongo gridfs connector', ->
           expect(res.status).to.equal 200
           done()
 
+    describe 'downloadById', ->
+
+      before (done) ->
+        ds.connector.db.collection('fs.files').remove {}, done
+
+      before (done) ->
+        ds.connector.db.collection('fs.chunks').remove {}, done
+
+      before (done) ->
+        insertTestFile ds, 'my-cats', done
+
+      it 'should return the file', (done) ->
+        request 'http://127.0.0.1:5000'
+        .get '/my-model/my-cats/downloadById/1234'
+        .end (err, res) ->
+          expect(res.status).to.equal 200
+          done()
+
     describe 'removeFile', ->
  
       before (done) ->
         ds.connector.db.collection('fs.files').remove {}, done
-     
+
+      before (done) ->
+        ds.connector.db.collection('fs.chunks').remove {}, done
+
       before (done) ->
         insertTestFile ds, 'my-cats', done
 
@@ -223,7 +252,10 @@ describe 'mongo gridfs connector', ->
  
       before (done) ->
         ds.connector.db.collection('fs.files').remove {}, done
-     
+
+      before (done) ->
+        ds.connector.db.collection('fs.chunks').remove {}, done
+
       before (done) ->
         insertTestFile ds, 'my-cats', done
 

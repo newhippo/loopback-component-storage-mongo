@@ -164,7 +164,7 @@ class MongoStorage
     res.set 'Content-Length', file.length
     read.pipe res
 
-  downloadById: (id, res, callback = (-> return)) ->
+  downloadById: (container, id, res, callback = (-> return)) ->
     self = @
     @getFileById id, (err, file) ->
       return callback err if err
@@ -232,6 +232,14 @@ MongoStorage.prototype.download.accepts = [
   {arg: 'res', type: 'object', http: {source: 'res'}}
 ]
 MongoStorage.prototype.download.http = {verb: 'get', path: '/:container/download/:file'}
+
+MongoStorage.prototype.downloadById.shared = true
+MongoStorage.prototype.downloadById.accepts = [
+  {arg: 'container', type: 'string'}
+  {arg: 'fileId', type: 'string'}
+  {arg: 'res', type: 'object', http: {source: 'res'}}
+]
+MongoStorage.prototype.downloadById.http = {verb: 'get', path: '/:container/downloadById/:fileId'}
 
 exports.initialize = (dataSource, callback) ->
   settings = dataSource.settings or {}
