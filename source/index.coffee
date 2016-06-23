@@ -166,7 +166,7 @@ class MongoStorage
 
   downloadById: (container, id, res, callback = (-> return)) ->
     self = @
-    @getFileById id, (err, file) ->
+    @getFileById ObjectID(id), (err, file) ->
       return callback err if err
       self.__download file, res, callback
 

@@ -8,10 +8,11 @@ mongo           = require 'mongodb'
 path            = require 'path'
 StorageService  = require '../source'
 request         = require 'supertest'
+objectId        = new ObjectID();
 
 insertTestFile = (ds, container, done) ->
   options =
-    _id: '1234'
+    _id: objectId
     filename: 'item.png'
     mode: 'w'
     metadata:
@@ -225,7 +226,7 @@ describe 'mongo gridfs connector', ->
 
       it 'should return the file', (done) ->
         request 'http://127.0.0.1:5000'
-        .get '/my-model/my-cats/downloadById/1234'
+        .get '/my-model/my-cats/downloadById/' + objectId.toString()
         .end (err, res) ->
           expect(res.status).to.equal 200
           done()
